@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate()
-  const [data, setData] = useState<Array<{
+  const [data,  _setData] = useState<Array<{
     id: number;
     username: string;
     role: string;

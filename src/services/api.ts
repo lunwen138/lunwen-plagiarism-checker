@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 
 // API基础配置
@@ -12,7 +11,7 @@ const api = axios.create({
 // 查重API服务
 export const plagiarismCheckService = {
   // 使用Copyleaks API进行查重
-  checkWithCopyleaks: async (file: File, language: string) => {
+  checkWithCopyleaks: async (_file: File, _language: string) => {
     // 在实际应用中，这里应该调用Copyleaks API
     // 由于是模拟环境，我们返回模拟数据
     return new Promise((resolve) => {
@@ -32,7 +31,7 @@ export const plagiarismCheckService = {
   },
 
   // 使用其他开源API进行查重
-  checkWithOtherAPI: async (file: File, language: string) => {
+  checkWithOtherAPI: async (_file: File, _language: string) => {
     // 模拟其他API的调用
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -54,7 +53,7 @@ export const plagiarismCheckService = {
 // AI检测API服务
 export const aiCheckService = {
   // 使用GPTZero API进行AI检测
-  checkWithGPTZero: async (file: File) => {
+  checkWithGPTZero: async (_file: File) => {
     // 在实际应用中，这里应该调用GPTZero API
     // 由于是模拟环境，我们返回模拟数据
     return new Promise((resolve) => {
@@ -71,7 +70,7 @@ export const aiCheckService = {
 // 跨语种检测服务
 export const crossLanguageCheckService = {
   // 检测跨语种抄袭
-  checkCrossLanguage: async (file: File, sourceLanguage: string, targetLanguage: string) => {
+  checkCrossLanguage: async (_file: File, _sourceLanguage: string, _targetLanguage: string) => {
     // 模拟跨语种检测
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -107,7 +106,7 @@ export const fileService = {
   },
 
   // 提取文件内容
-  extractContent: async (fileId: string) => {
+  extractContent: async (_fileId: string) => {
     // 模拟文件内容提取
     return new Promise((resolve) => {
       setTimeout(() => {
