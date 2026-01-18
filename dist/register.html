@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>论文查重系统 - 注册</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .auth-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    
+    .auth-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #2d3748;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #555;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #646cff;
+      box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+      background: white;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .role-selector {
+      display: flex;
+      justify-content: space-between;
+      margin: 1.5rem 0;
+    }
+    
+    .role-option {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0 0.25rem;
+    }
+    
+    .role-option:hover {
+      border-color: #646cff;
+      background: rgba(100, 108, 255, 0.05);
+    }
+    
+    .role-option.selected {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+    
+    .login-link {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .login-link a {
+      color: #646cff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    
+    .success-message {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-card">
+    <h1 class="auth-title">注册账号</h1>
+    
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
+    
+    <div class="form-group">
+      <label class="form-label">用户名</label>
+      <input type="text" class="form-input" id="username" placeholder="请输入用户名">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">密码</label>
+      <input type="password" class="form-input" id="password" placeholder="请输入密码">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">确认密码</label>
+      <input type="password" class="form-input" id="confirmPassword" placeholder="请再次输入密码">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">姓名</label>
+      <input type="text" class="form-input" id="name" placeholder="请输入真实姓名">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">邮箱</label>
+      <input type="email" class="form-input" id="email" placeholder="请输入邮箱地址">
+    </div>
+    
+    <div class="role-selector">
+      <div class="role-option" onclick="selectRole('student')" id="roleStudent">学生</div>
+      <div class="role-option" onclick="selectRole('teacher')" id="roleTeacher">教师</div>
+      <div class="role-option" onclick="selectRole('admin')" id="roleAdmin">管理员</div>
+    </div>
+    
+    <button class="btn-primary" onclick="handleRegister()">注册</button>
+    
+    <div class="login-link">
+      已有账号？<a href="index.html">立即登录</a>
+    </div>
+  </div>
+
+  <script>
+    let selectedRole = 'student';
+
+    function selectRole(role) {
+      selectedRole = role;
+      
+      // 重置所有选项样式
+      document.querySelectorAll('.role-option').forEach(option => {
+        option.classList.remove('selected');
+      });
+      
+      // 设置选中选项样式
+      document.getElementById(`role${role.charAt(0).toUpperCase() + role.slice(1)}`).classList.add('selected');
+    }
+
+    function handleRegister() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+      
+      // 表单验证
+      if (!username || !password || !confirmPassword || !name || !email) {
+        errorMessage.textContent = '请填写所有必填字段';
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        errorMessage.textContent = '两次输入的密码不一致';
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        return;
+      }
+      
+      if (password.length < 6) {
+        errorMessage.textContent = '密码长度至少为6位';
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        return;
+      }
+      
+      // 模拟注册过程
+      // 这里可以根据实际需求修改注册逻辑
+      setTimeout(() => {
+        errorMessage.style.display = 'none';
+        successMessage.textContent = '注册成功！正在跳转到登录页面...';
+        successMessage.style.display = 'block';
+        
+        // 3秒后跳转到登录页面
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 3000);
+      }, 1500);
+    }
+
+    // 默认选中学生角色
+    selectRole('student');
+  </script>
+</body>
+</html>
