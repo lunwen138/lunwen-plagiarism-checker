@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教师端 - 论文查重系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .dashboard-header {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+    }
+    
+    .dashboard-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2d3748;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .dashboard-nav {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .btn-secondary {
+      padding: 0.75rem 1.5rem;
+      background-color: #f9f9f9;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #f0f0f0;
+      border-color: #ccc;
+    }
+    
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #2d3748;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #555;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #646cff;
+      box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+      background: white;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(100, 108, 255, 0.4);
+    }
+    
+    .search-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .search-container .form-input {
+      flex: 1;
+    }
+    
+    .search-results {
+      margin-top: 15px;
+      padding: 15px;
+      background: rgba(100, 108, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+    }
+    
+    .search-result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+    
+    .search-result-item:hover {
+      background: rgba(100, 108, 255, 0.1);
+      border-radius: 4px;
+    }
+    
+    .search-result-item:last-child {
+      border-bottom: none;
+    }
+    
+    .selected-students {
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(100, 108, 255, 0.1);
+      border-radius: 6px;
+      font-weight: 600;
+      color: #646cff;
+    }
+    
+    .success-message {
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(46, 204, 113, 0.2);
+      border-radius: 6px;
+      font-weight: 600;
+      color: #27ae60;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    th {
+      background-color: rgba(100, 108, 255, 0.05);
+      font-weight: 600;
+      color: #2d3748;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    
+    tr:hover {
+      background-color: rgba(100, 108, 255, 0.05);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .class-info {
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(100, 108, 255, 0.05);
+      border-radius: 6px;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #2d3748;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .student-list {
+      list-style: none;
+      margin: 10px 0;
+    }
+    
+    .student-item {
+      padding: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+    
+    .student-item:hover {
+      background: rgba(100, 108, 255, 0.05);
+      border-radius: 4px;
+    }
+    
+    .status-badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    
+    .status-badge.passing {
+      background: rgba(16, 185, 129, 0.2);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-badge.failing {
+      background: rgba(231, 76, 60, 0.2);
+      color: #c0392b;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+    
+    .no-data {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+      font-style: italic;
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .dashboard-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .search-container {
+        flex-direction: column;
+      }
+      
+      table {
+        font-size: 14px;
+      }
+      
+      th, td {
+        padding: 8px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h2 class="dashboard-title">教师端仪表盘</h2>
+      <div class="dashboard-nav">
+        <button class="btn-secondary" onclick="window.location.href='index.html'">
+          退出登录
+        </button>
+      </div>
+    </div>
+    
+    <div class="dashboard-content">
+      <div class="card">
+        <h3 class="card-title">创建班级</h3>
+        <div class="form-group">
+          <label class="form-label">班级名称</label>
+          <input 
+            type="text" 
+            class="form-input" 
+            placeholder="请输入班级名称" 
+            id="className"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">查重率要求 (%)</label>
+          <input 
+            type="number" 
+            class="form-input" 
+            min="0" 
+            max="100" 
+            value="20"
+            id="plagiarismThreshold"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">AI率要求 (%)</label>
+          <input 
+            type="number" 
+            class="form-input" 
+            min="0" 
+            max="100" 
+            value="30"
+            id="aiThreshold"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">搜索并添加学生</label>
+          <div class="search-container">
+            <input 
+              type="text" 
+              class="form-input" 
+              placeholder="输入学生用户名" 
+              id="searchQuery"
+            />
+            <button class="btn-secondary" onclick="handleSearchStudents()">
+              搜索
+            </button>
+          </div>
+        </div>
+        
+        <div id="searchResults" class="search-results" style="display: none;">
+          <h4>搜索结果</h4>
+          <ul id="searchResultsList">
+          </ul>
+        </div>
+        
+        <div id="selectedStudents" class="selected-students" style="display: none;">
+          <p>已选择 <span id="selectedCount">0</span> 名学生</p>
+        </div>
+        
+        <div id="successMessage" class="success-message" style="display: none;">
+          班级创建成功
+        </div>
+        
+        <button class="btn-primary" onclick="handleAddClass()">
+          创建班级
+        </button>
+      </div>
+      
+      <div class="card">
+        <h3 class="card-title">班级列表</h3>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>班级名称</th>
+                <th>查重率要求 (%)</th>
+                <th>AI率要求 (%)</th>
+                <th>学生人数</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="classesTable">
+              <tr>
+                <td>计算机科学与技术1班</td>
+                <td>20</td>
+                <td>30</td>
+                <td>2</td>
+                <td>
+                  <button class="btn-secondary" onclick="viewClassDetails(1)">
+                    查看详情
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>计算机科学与技术2班</td>
+                <td>15</td>
+                <td>25</td>
+                <td>2</td>
+                <td>
+                  <button class="btn-secondary" onclick="viewClassDetails(2)">
+                    查看详情
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div id="classDetails" class="card" style="display: none;">
+        <div class="card-header">
+          <h3 class="card-title" id="classDetailsTitle">班级详情</h3>
+          <button class="btn-secondary" onclick="hideClassDetails()">
+            返回
+          </button>
+        </div>
+        
+        <div class="class-info">
+          <p><strong>查重率要求:</strong> <span id="classPlagiarismThreshold">20</span>%</p>
+          <p><strong>AI率要求:</strong> <span id="classAiThreshold">30</span>%</p>
+          <p><strong>学生人数:</strong> <span id="classStudentCount">2</span></p>
+        </div>
+        
+        <h4 class="section-title">班级学生</h4>
+        <ul class="student-list" id="classStudentsList">
+          <li class="student-item">
+            <strong>student1</strong> - 张三 (zhangsan@example.com)
+          </li>
+          <li class="student-item">
+            <strong>student2</strong> - 李四 (lisi@example.com)
+          </li>
+        </ul>
+        
+        <h4 class="section-title">学生论文</h4>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>学生姓名</th>
+                <th>论文标题</th>
+                <th>查重率 (%)</th>
+                <th>AI率 (%)</th>
+                <th>提交日期</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody id="classPapersList">
+              <tr>
+                <td>张三</td>
+                <td>人工智能发展现状</td>
+                <td>15</td>
+                <td>25</td>
+                <td>2024-01-15</td>
+                <td>
+                  <span class="status-badge passing">合格</span>
+                </td>
+              </tr>
+              <tr>
+                <td>李四</td>
+                <td>机器学习算法研究</td>
+                <td>22</td>
+                <td>35</td>
+                <td>2024-01-16</td>
+                <td>
+                  <span class="status-badge failing">不合格</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模拟学生数据
+    const mockStudents = [
+      { id: 1, username: 'student1', name: '张三', email: 'zhangsan@example.com' },
+      { id: 2, username: 'student2', name: '李四', email: 'lisi@example.com' },
+      { id: 3, username: 'student3', name: '王五', email: 'wangwu@example.com' },
+      { id: 4, username: 'student4', name: '赵六', email: 'zhaoliu@example.com' },
+      { id: 5, username: 'student5', name: '钱七', email: 'qianqi@example.com' }
+    ];
+
+    // 模拟班级数据
+    const mockClasses = [
+      { 
+        id: 1, 
+        name: '计算机科学与技术1班', 
+        plagiarismThreshold: 20, 
+        aiThreshold: 30,
+        students: [mockStudents[0], mockStudents[1]],
+        papers: [
+          { 
+            id: 1, 
+            studentId: 1, 
+            studentName: '张三', 
+            title: '人工智能发展现状', 
+            plagiarismRate: 15, 
+            aiRate: 25, 
+            submittedAt: '2024-01-15' 
+          },
+          { 
+            id: 2, 
+            studentId: 2, 
+            studentName: '李四', 
+            title: '机器学习算法研究', 
+            plagiarismRate: 22, 
+            aiRate: 35, 
+            submittedAt: '2024-01-16' 
+          }
+        ]
+      },
+      { 
+        id: 2, 
+        name: '计算机科学与技术2班', 
+        plagiarismThreshold: 15, 
+        aiThreshold: 25,
+        students: [mockStudents[2], mockStudents[3]],
+        papers: [
+          { 
+            id: 3, 
+            studentId: 3, 
+            studentName: '王五', 
+            title: '深度学习应用', 
+            plagiarismRate: 12, 
+            aiRate: 20, 
+            submittedAt: '2024-01-14' 
+          }
+        ]
+      }
+    ];
+
+    let selectedStudentIds = [];
+
+    function handleSearchStudents() {
+      const query = document.getElementById('searchQuery').value;
+      if (!query) {
+        document.getElementById('searchResults').style.display = 'none';
+        return;
+      }
+      
+      const results = mockStudents.filter(student => 
+        student.username.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      const resultsList = document.getElementById('searchResultsList');
+      resultsList.innerHTML = '';
+      
+      results.forEach(student => {
+        const li = document.createElement('li');
+        li.className = 'search-result-item';
+        li.innerHTML = `
+          <div>
+            <strong>${student.username}</strong> - ${student.name} (${student.email})
+          </div>
+          <input 
+            type="checkbox" 
+            ${selectedStudentIds.includes(student.id) ? 'checked' : ''}
+            onchange="toggleStudentSelection(${student.id})"
+          />
+        `;
+        resultsList.appendChild(li);
+      });
+      
+      document.getElementById('searchResults').style.display = 'block';
+    }
+
+    function toggleStudentSelection(studentId) {
+      if (selectedStudentIds.includes(studentId)) {
+        selectedStudentIds = selectedStudentIds.filter(id => id !== studentId);
+      } else {
+        selectedStudentIds.push(studentId);
+      }
+      
+      updateSelectedStudentsDisplay();
+    }
+
+    function updateSelectedStudentsDisplay() {
+      const selectedCount = selectedStudentIds.length;
+      if (selectedCount > 0) {
+        document.getElementById('selectedCount').textContent = selectedCount;
+        document.getElementById('selectedStudents').style.display = 'block';
+      } else {
+        document.getElementById('selectedStudents').style.display = 'none';
+      }
+    }
+
+    function handleAddClass() {
+      const className = document.getElementById('className').value;
+      if (!className) return;
+
+      const plagiarismThreshold = parseInt(document.getElementById('plagiarismThreshold').value);
+      const aiThreshold = parseInt(document.getElementById('aiThreshold').value);
+
+      // 显示成功消息
+      document.getElementById('successMessage').style.display = 'block';
+
+      // 3秒后清除成功消息
+      setTimeout(() => {
+        document.getElementById('successMessage').style.display = 'none';
+      }, 3000);
+
+      // 重置表单
+      document.getElementById('className').value = '';
+      selectedStudentIds = [];
+      document.getElementById('selectedStudents').style.display = 'none';
+      document.getElementById('searchResults').style.display = 'none';
+    }
+
+    function viewClassDetails(classId) {
+      const cls = mockClasses.find(c => c.id === classId);
+      if (!cls) return;
+
+      document.getElementById('classDetailsTitle').textContent = `${cls.name} - 班级详情`;
+      document.getElementById('classPlagiarismThreshold').textContent = cls.plagiarismThreshold;
+      document.getElementById('classAiThreshold').textContent = cls.aiThreshold;
+      document.getElementById('classStudentCount').textContent = cls.students.length;
+
+      // 更新学生列表
+      const studentsList = document.getElementById('classStudentsList');
+      studentsList.innerHTML = '';
+      cls.students.forEach(student => {
+        const li = document.createElement('li');
+        li.className = 'student-item';
+        li.innerHTML = `<strong>${student.username}</strong> - ${student.name} (${student.email})`;
+        studentsList.appendChild(li);
+      });
+
+      // 更新论文列表
+      const papersList = document.getElementById('classPapersList');
+      papersList.innerHTML = '';
+      cls.papers.forEach(paper => {
+        const isPassing = paper.plagiarismRate <= cls.plagiarismThreshold && paper.aiRate <= cls.aiThreshold;
+        const tr = document.createElement('tr');
+        tr.className = isPassing ? 'passing' : 'failing';
+        tr.innerHTML = `
+          <td>${paper.studentName}</td>
+          <td>${paper.title}</td>
+          <td>${paper.plagiarismRate}</td>
+          <td>${paper.aiRate}</td>
+          <td>${paper.submittedAt}</td>
+          <td>
+            <span class="status-badge ${isPassing ? 'passing' : 'failing'}">
+              ${isPassing ? '合格' : '不合格'}
+            </span>
+          </td>
+        `;
+        papersList.appendChild(tr);
+      });
+
+      document.getElementById('classDetails').style.display = 'block';
+    }
+
+    function hideClassDetails() {
+      document.getElementById('classDetails').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

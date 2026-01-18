@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理端 - 论文查重系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .dashboard-header {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+    }
+    
+    .dashboard-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2d3748;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .dashboard-nav {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .btn-secondary {
+      padding: 0.75rem 1.5rem;
+      background-color: #f9f9f9;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #f0f0f0;
+      border-color: #ccc;
+    }
+    
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #2d3748;
+    }
+    
+    .tab-navigation {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 10px;
+    }
+    
+    .tab-btn {
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      color: #666;
+      position: relative;
+    }
+    
+    .tab-btn:hover {
+      background: rgba(100, 108, 255, 0.05);
+      color: #646cff;
+    }
+    
+    .tab-btn.active {
+      background: rgba(100, 108, 255, 0.1);
+      color: #646cff;
+      font-weight: 600;
+    }
+    
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #646cff, #535bf2);
+      border-radius: 3px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .stat-card {
+      background: rgba(100, 108, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(100, 108, 255, 0.15);
+      background: rgba(100, 108, 255, 0.1);
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #646cff;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      font-size: 1rem;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #2d3748;
+      background: linear-gradient(135deg, #646cff, #535bf2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    th {
+      background-color: rgba(100, 108, 255, 0.05);
+      font-weight: 600;
+      color: #2d3748;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    
+    tr:hover {
+      background-color: rgba(100, 108, 255, 0.05);
+    }
+    
+    tr.passing {
+      background-color: rgba(16, 185, 129, 0.05);
+    }
+    
+    tr.failing {
+      background-color: rgba(239, 68, 68, 0.05);
+    }
+    
+    .class-details {
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(100, 108, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+    }
+    
+    .class-info {
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(100, 108, 255, 0.05);
+      border-radius: 6px;
+      border: 1px solid rgba(100, 108, 255, 0.2);
+    }
+    
+    .student-list {
+      list-style: none;
+      margin: 10px 0;
+    }
+    
+    .student-item {
+      padding: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+    
+    .student-item:hover {
+      background: rgba(100, 108, 255, 0.05);
+      border-radius: 4px;
+    }
+    
+    .status-badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    
+    .status-badge.passing {
+      background: rgba(16, 185, 129, 0.2);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-badge.failing {
+      background: rgba(239, 68, 68, 0.2);
+      color: #dc2626;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .no-data {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+      font-style: italic;
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .dashboard-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .tab-navigation {
+        flex-wrap: wrap;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+      }
+      
+      table {
+        font-size: 14px;
+      }
+      
+      th, td {
+        padding: 8px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h2 class="dashboard-title">管理端仪表盘</h2>
+      <div class="dashboard-nav">
+        <button class="btn-secondary" onclick="window.location.href='index.html'">
+          退出登录
+        </button>
+      </div>
+    </div>
+    
+    <div class="dashboard-content">
+      <div class="card">
+        <div class="tab-navigation">
+          <button 
+            class="tab-btn active"
+            onclick="switchTab('overview')"
+          >
+            概览
+          </button>
+          <button 
+            class="tab-btn"
+            onclick="switchTab('classes')"
+          >
+            班级管理
+          </button>
+          <button 
+            class="tab-btn"
+            onclick="switchTab('users')"
+          >
+            用户管理
+          </button>
+          <button 
+            class="tab-btn"
+            onclick="switchTab('papers')"
+          >
+            论文检测
+          </button>
+        </div>
+
+        <div id="overviewTab" class="tab-content">
+          <h3 class="card-title">系统概览</h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number">8</div>
+              <div class="stat-label">总用户数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">2</div>
+              <div class="stat-label">总班级数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">3</div>
+              <div class="stat-label">检测论文数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number">5</div>
+              <div class="stat-label">学生数</div>
+            </div>
+          </div>
+
+          <h4 class="section-title">最近检测论文</h4>
+          <div class="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>论文标题</th>
+                  <th>学生姓名</th>
+                  <th>查重率 (%)</th>
+                  <th>AI率 (%)</th>
+                  <th>提交日期</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>人工智能发展现状</td>
+                  <td>张三</td>
+                  <td>15</td>
+                  <td>25</td>
+                  <td>2024-01-15</td>
+                </tr>
+                <tr>
+                  <td>机器学习算法研究</td>
+                  <td>李四</td>
+                  <td>22</td>
+                  <td>35</td>
+                  <td>2024-01-16</td>
+                </tr>
+                <tr>
+                  <td>深度学习应用</td>
+                  <td>王五</td>
+                  <td>12</td>
+                  <td>20</td>
+                  <td>2024-01-14</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="classesTab" class="tab-content" style="display: none;">
+          <h3 class="card-title">班级管理</h3>
+          <div class="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>班级ID</th>
+                  <th>班级名称</th>
+                  <th>查重率要求 (%)</th>
+                  <th>AI率要求 (%)</th>
+                  <th>学生人数</th>
+                  <th>论文数量</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>计算机科学与技术1班</td>
+                  <td>20</td>
+                  <td>30</td>
+                  <td>2</td>
+                  <td>2</td>
+                  <td>
+                    <button class="btn-secondary" onclick="viewClassDetails(1)">
+                      查看详情
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>计算机科学与技术2班</td>
+                  <td>15</td>
+                  <td>25</td>
+                  <td>2</td>
+                  <td>1</td>
+                  <td>
+                    <button class="btn-secondary" onclick="viewClassDetails(2)">
+                      查看详情
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="classDetails" class="class-details" style="display: none;">
+            <h4 class="section-title" id="classDetailsTitle">班级详情</h4>
+            <div class="class-info">
+              <p><strong>查重率要求:</strong> <span id="classPlagiarismThreshold">20</span>%</p>
+              <p><strong>AI率要求:</strong> <span id="classAiThreshold">30</span>%</p>
+              <p><strong>学生人数:</strong> <span id="classStudentCount">2</span></p>
+            </div>
+            
+            <h5 class="section-title">班级学生</h5>
+            <ul class="student-list" id="classStudentsList">
+              <li class="student-item">
+                <strong>student1</strong> - 张三 (zhangsan@example.com)
+              </li>
+              <li class="student-item">
+                <strong>student2</strong> - 李四 (lisi@example.com)
+              </li>
+            </ul>
+            
+            <h5 class="section-title">学生论文</h5>
+            <div class="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>论文标题</th>
+                    <th>学生姓名</th>
+                    <th>查重率 (%)</th>
+                    <th>AI率 (%)</th>
+                    <th>提交日期</th>
+                    <th>状态</th>
+                  </tr>
+                </thead>
+                <tbody id="classPapersList">
+                  <tr class="passing">
+                    <td>人工智能发展现状</td>
+                    <td>张三</td>
+                    <td>15</td>
+                    <td>25</td>
+                    <td>2024-01-15</td>
+                    <td>
+                      <span class="status-badge passing">合格</span>
+                    </td>
+                  </tr>
+                  <tr class="failing">
+                    <td>机器学习算法研究</td>
+                    <td>李四</td>
+                    <td>22</td>
+                    <td>35</td>
+                    <td>2024-01-16</td>
+                    <td>
+                      <span class="status-badge failing">不合格</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <button class="btn-secondary" onclick="hideClassDetails()">
+              关闭详情
+            </button>
+          </div>
+        </div>
+
+        <div id="usersTab" class="tab-content" style="display: none;">
+          <h3 class="card-title">用户管理</h3>
+          <div class="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>用户ID</th>
+                  <th>用户名</th>
+                  <th>姓名</th>
+                  <th>邮箱</th>
+                  <th>角色</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>admin1</td>
+                  <td>管理员</td>
+                  <td>admin@example.com</td>
+                  <td>管理员</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>teacher1</td>
+                  <td>李老师</td>
+                  <td>teacher1@example.com</td>
+                  <td>教师</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>teacher2</td>
+                  <td>王老师</td>
+                  <td>teacher2@example.com</td>
+                  <td>教师</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>student1</td>
+                  <td>张三</td>
+                  <td>zhangsan@example.com</td>
+                  <td>学生</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>student2</td>
+                  <td>李四</td>
+                  <td>lisi@example.com</td>
+                  <td>学生</td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>student3</td>
+                  <td>王五</td>
+                  <td>wangwu@example.com</td>
+                  <td>学生</td>
+                </tr>
+                <tr>
+                  <td>7</td>
+                  <td>student4</td>
+                  <td>赵六</td>
+                  <td>zhaoliu@example.com</td>
+                  <td>学生</td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>student5</td>
+                  <td>钱七</td>
+                  <td>qianqi@example.com</td>
+                  <td>学生</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="papersTab" class="tab-content" style="display: none;">
+          <h3 class="card-title">论文检测记录</h3>
+          <div class="overflow-x-auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>论文ID</th>
+                  <th>论文标题</th>
+                  <th>学生姓名</th>
+                  <th>查重率 (%)</th>
+                  <th>AI率 (%)</th>
+                  <th>提交日期</th>
+                  <th>班级</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="passing">
+                  <td>1</td>
+                  <td>人工智能发展现状</td>
+                  <td>张三</td>
+                  <td>15</td>
+                  <td>25</td>
+                  <td>2024-01-15</td>
+                  <td>计算机科学与技术1班</td>
+                  <td>
+                    <span class="status-badge passing">合格</span>
+                  </td>
+                </tr>
+                <tr class="failing">
+                  <td>2</td>
+                  <td>机器学习算法研究</td>
+                  <td>李四</td>
+                  <td>22</td>
+                  <td>35</td>
+                  <td>2024-01-16</td>
+                  <td>计算机科学与技术1班</td>
+                  <td>
+                    <span class="status-badge failing">不合格</span>
+                  </td>
+                </tr>
+                <tr class="passing">
+                  <td>3</td>
+                  <td>深度学习应用</td>
+                  <td>王五</td>
+                  <td>12</td>
+                  <td>20</td>
+                  <td>2024-01-14</td>
+                  <td>计算机科学与技术2班</td>
+                  <td>
+                    <span class="status-badge passing">合格</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      // 隐藏所有标签内容
+      document.getElementById('overviewTab').style.display = 'none';
+      document.getElementById('classesTab').style.display = 'none';
+      document.getElementById('usersTab').style.display = 'none';
+      document.getElementById('papersTab').style.display = 'none';
+      
+      // 移除所有标签按钮的活跃状态
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // 显示选中的标签内容
+      document.getElementById(tabName + 'Tab').style.display = 'block';
+      
+      // 设置选中标签按钮的活跃状态
+      event.target.classList.add('active');
+    }
+
+    function viewClassDetails(classId) {
+      const classDetails = document.getElementById('classDetails');
+      classDetails.style.display = 'block';
+      
+      if (classId === 1) {
+        document.getElementById('classDetailsTitle').textContent = '计算机科学与技术1班 - 班级详情';
+        document.getElementById('classPlagiarismThreshold').textContent = '20';
+        document.getElementById('classAiThreshold').textContent = '30';
+        document.getElementById('classStudentCount').textContent = '2';
+        
+        const studentsList = document.getElementById('classStudentsList');
+        studentsList.innerHTML = `
+          <li class="student-item">
+            <strong>student1</strong> - 张三 (zhangsan@example.com)
+          </li>
+          <li class="student-item">
+            <strong>student2</strong> - 李四 (lisi@example.com)
+          </li>
+        `;
+        
+        const papersList = document.getElementById('classPapersList');
+        papersList.innerHTML = `
+          <tr class="passing">
+            <td>人工智能发展现状</td>
+            <td>张三</td>
+            <td>15</td>
+            <td>25</td>
+            <td>2024-01-15</td>
+            <td>
+              <span class="status-badge passing">合格</span>
+            </td>
+          </tr>
+          <tr class="failing">
+            <td>机器学习算法研究</td>
+            <td>李四</td>
+            <td>22</td>
+            <td>35</td>
+            <td>2024-01-16</td>
+            <td>
+              <span class="status-badge failing">不合格</span>
+            </td>
+          </tr>
+        `;
+      } else if (classId === 2) {
+        document.getElementById('classDetailsTitle').textContent = '计算机科学与技术2班 - 班级详情';
+        document.getElementById('classPlagiarismThreshold').textContent = '15';
+        document.getElementById('classAiThreshold').textContent = '25';
+        document.getElementById('classStudentCount').textContent = '2';
+        
+        const studentsList = document.getElementById('classStudentsList');
+        studentsList.innerHTML = `
+          <li class="student-item">
+            <strong>student3</strong> - 王五 (wangwu@example.com)
+          </li>
+          <li class="student-item">
+            <strong>student4</strong> - 赵六 (zhaoliu@example.com)
+          </li>
+        `;
+        
+        const papersList = document.getElementById('classPapersList');
+        papersList.innerHTML = `
+          <tr class="passing">
+            <td>深度学习应用</td>
+            <td>王五</td>
+            <td>12</td>
+            <td>20</td>
+            <td>2024-01-14</td>
+            <td>
+              <span class="status-badge passing">合格</span>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function hideClassDetails() {
+      document.getElementById('classDetails').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
