@@ -1,9 +1,10 @@
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
-import AdminDashboard from './pages/AdminDashboard'
-import TeacherDashboard from './pages/TeacherDashboard'
-import StudentDashboard from './pages/StudentDashboard'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import StudentDashboard from './pages/StudentDashboard';
+import TeacherDashboard from './pages/TeacherDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import './index.css';
 
 function App() {
   return (
@@ -11,12 +12,12 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/teacher" element={<TeacherDashboard />} />
         <Route path="/student" element={<StudentDashboard />} />
+        <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

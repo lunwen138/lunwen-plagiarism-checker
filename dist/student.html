@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学生端 - 论文查重系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .dashboard-header {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+    }
+    
+    .dashboard-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2d3748;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .dashboard-nav {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .btn-secondary {
+      padding: 0.75rem 1.5rem;
+      background-color: #f9f9f9;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #f0f0f0;
+      border-color: #ccc;
+    }
+    
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #2d3748;
+    }
+    
+    .upload-area {
+      border: 2px dashed rgba(100, 108, 255, 0.3);
+      border-radius: 12px;
+      padding: 3rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(100, 108, 255, 0.05);
+    }
+    
+    .upload-area:hover {
+      border-color: #646cff;
+      background-color: rgba(100, 108, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(100, 108, 255, 0.2);
+    }
+    
+    .file-input {
+      display: none;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(100, 108, 255, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(100, 108, 255, 0.4);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .result-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .result-label {
+      font-weight: 600;
+      color: #4b5563;
+    }
+    
+    .result-value {
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 1.1rem;
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    
+    .loading-spinner {
+      border: 4px solid rgba(100, 108, 255, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #646cff;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .dashboard-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .upload-area {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h2 class="dashboard-title">学生端仪表盘</h2>
+      <div class="dashboard-nav">
+        <button class="btn-secondary" onclick="window.location.href='index.html'">
+          退出登录
+        </button>
+      </div>
+    </div>
+    
+    <div class="dashboard-content">
+      <div class="card">
+        <h3 class="card-title">上传论文</h3>
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+          <input 
+            id="fileInput" 
+            type="file" 
+            class="file-input" 
+            accept=".doc,.docx,.pdf" 
+            onchange="handleFileChange(event)"
+          />
+          <p id="fileNameDisplay">点击或拖拽文件到此处上传</p>
+          <p class="text-sm text-gray-500">支持 Word (.doc, .docx) 和 PDF 格式</p>
+        </div>
+        <button 
+          class="btn-primary" 
+          onclick="handleUpload()"
+          id="uploadBtn"
+          disabled
+        >
+          开始检测
+        </button>
+      </div>
+
+      <div id="loading" class="card" style="display: none;">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+
+      <div id="resultCard" class="card" style="display: none;">
+        <h3 class="card-title">检测报告</h3>
+        <div class="result-item">
+          <span class="result-label">查重率</span>
+          <span class="result-value" id="plagiarismRate">0%</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">AI生成率</span>
+          <span class="result-value" id="aiRate">0%</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">报告</span>
+          <a href="#" class="text-blue-600 hover:underline">
+            查看详细报告
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedFile = null;
+
+    function handleFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        selectedFile = file;
+        document.getElementById('fileNameDisplay').textContent = `已选择文件: ${file.name}`;
+        document.getElementById('uploadBtn').disabled = false;
+      }
+    }
+
+    function handleUpload() {
+      if (!selectedFile) return;
+
+      // 显示加载状态
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('resultCard').style.display = 'none';
+
+      // 模拟检测过程
+      setTimeout(() => {
+        // 生成随机检测结果
+        const plagiarismRate = (Math.random() * 50).toFixed(2);
+        const aiRate = (Math.random() * 60).toFixed(2);
+
+        // 更新结果
+        document.getElementById('plagiarismRate').textContent = `${plagiarismRate}%`;
+        document.getElementById('aiRate').textContent = `${aiRate}%`;
+
+        // 隐藏加载状态，显示结果
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('resultCard').style.display = 'block';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
